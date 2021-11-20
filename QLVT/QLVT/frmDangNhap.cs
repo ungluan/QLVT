@@ -77,25 +77,29 @@ namespace QLVT
             Program.mloginDN = Program.mlogin;
             Program.passwordDN = Program.password;
             String strLenh = "EXEC SP_Lay_Thong_Tin_NV_Tu_Login'" + Program.mlogin + "'";
-
-            Program.myReader = Program.ExecSqlDataReader(strLenh);
-            if (Program.myReader == null) return;
-            Program.myReader.Read();
-
-            Program.username = Program.myReader.GetString(0);
-            if (Convert.IsDBNull(Program.username))
+            try
             {
-                MessageBox.Show("Login bạn nhập không có quyền truy cập dữ liệu.\nBạn xem lại usernam, password", "",MessageBoxButtons.OK);
+                Program.myReader = Program.ExecSqlDataReader(strLenh);
+                //if (Program.myReader == null) return;
+                Program.myReader.Read();
+                Program.username = Program.myReader.GetString(0);
+                Program.mHoten = Program.myReader.GetString(1);
+                Program.mGroup = Program.myReader.GetString(2);
+                
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Login bạn nhập không có quyền truy cập dữ liệu.\nBạn xem lại username, password", "", MessageBoxButtons.OK);
                 return;
             }
-            Program.mHoten = Program.myReader.GetString(1);
-            Program.mGroup = Program.myReader.GetString(2);
             Program.myReader.Close();
             Program.conn.Close();
-            Program.frmChinh.MANV.Text = "Mã NV = " + Program.username;
-            Program.frmChinh.HOTEN.Text = "Họ tên = " + Program.mHoten;
-            Program.frmChinh.NHOM.Text = "Nhóm = " + Program.mGroup;
             Program.frmChinh.HienThiMenu();
+        }
+
+        private void btnThoat_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

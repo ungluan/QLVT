@@ -41,61 +41,62 @@ namespace QLVT
             // 
             // txtPass
             // 
-            this.txtPass.Location = new System.Drawing.Point(160, 116);
+            this.txtPass.Location = new System.Drawing.Point(452, 132);
             this.txtPass.Name = "txtPass";
             this.txtPass.PasswordChar = '*';
-            this.txtPass.Size = new System.Drawing.Size(234, 25);
+            this.txtPass.Size = new System.Drawing.Size(311, 33);
             this.txtPass.TabIndex = 11;
             this.txtPass.UseSystemPasswordChar = true;
             // 
             // txtLogin
             // 
-            this.txtLogin.Location = new System.Drawing.Point(160, 71);
+            this.txtLogin.Location = new System.Drawing.Point(452, 67);
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(234, 25);
+            this.txtLogin.Size = new System.Drawing.Size(311, 33);
             this.txtLogin.TabIndex = 10;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(84, 124);
+            this.label3.Location = new System.Drawing.Point(288, 139);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 17);
+            this.label3.Size = new System.Drawing.Size(99, 26);
             this.label3.TabIndex = 9;
             this.label3.Text = "Mật khẩu";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(84, 79);
+            this.label2.Location = new System.Drawing.Point(288, 77);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 17);
+            this.label2.Size = new System.Drawing.Size(106, 26);
             this.label2.TabIndex = 8;
             this.label2.Text = "Tài khoản";
             // 
             // cmbChiNhanh
             // 
+            this.cmbChiNhanh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChiNhanh.FormattingEnabled = true;
-            this.cmbChiNhanh.Location = new System.Drawing.Point(160, 24);
+            this.cmbChiNhanh.Location = new System.Drawing.Point(452, 12);
             this.cmbChiNhanh.Name = "cmbChiNhanh";
-            this.cmbChiNhanh.Size = new System.Drawing.Size(234, 25);
+            this.cmbChiNhanh.Size = new System.Drawing.Size(311, 34);
             this.cmbChiNhanh.TabIndex = 7;
             this.cmbChiNhanh.SelectedIndexChanged += new System.EventHandler(this.cmbChiNhanh_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(84, 32);
+            this.label1.Location = new System.Drawing.Point(288, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 17);
+            this.label1.Size = new System.Drawing.Size(109, 26);
             this.label1.TabIndex = 6;
             this.label1.Text = "Chi nhánh";
             // 
             // btnDangNhap
             // 
-            this.btnDangNhap.Location = new System.Drawing.Point(111, 197);
+            this.btnDangNhap.Location = new System.Drawing.Point(293, 230);
             this.btnDangNhap.Name = "btnDangNhap";
-            this.btnDangNhap.Size = new System.Drawing.Size(80, 25);
+            this.btnDangNhap.Size = new System.Drawing.Size(213, 48);
             this.btnDangNhap.TabIndex = 12;
             this.btnDangNhap.Text = "Đăng nhập";
             this.btnDangNhap.UseVisualStyleBackColor = true;
@@ -103,19 +104,20 @@ namespace QLVT
             // 
             // btnThoat
             // 
-            this.btnThoat.Location = new System.Drawing.Point(278, 197);
+            this.btnThoat.Location = new System.Drawing.Point(572, 230);
             this.btnThoat.Name = "btnThoat";
-            this.btnThoat.Size = new System.Drawing.Size(80, 25);
+            this.btnThoat.Size = new System.Drawing.Size(191, 48);
             this.btnThoat.TabIndex = 13;
             this.btnThoat.Text = "Thoát";
             this.btnThoat.UseVisualStyleBackColor = true;
+            this.btnThoat.Click += new System.EventHandler(this.btnThoat_Click);
             // 
             // frmDangNhap
             // 
             this.Appearance.Options.UseFont = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(463, 265);
+            this.ClientSize = new System.Drawing.Size(1068, 436);
             this.Controls.Add(this.btnThoat);
             this.Controls.Add(this.btnDangNhap);
             this.Controls.Add(this.txtPass);
@@ -127,6 +129,7 @@ namespace QLVT
             this.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmDangNhap";
             this.Text = "frmDangNhap";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.frmDangNhap_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
