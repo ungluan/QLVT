@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraReports.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,8 @@ namespace QLVT
     public partial class frmVatTu : Form
     {
         int vitri;
+
+        Stack undolist = new Stack();
         public frmVatTu()
         {
             InitializeComponent();
@@ -78,6 +81,8 @@ namespace QLVT
         }
         private void btnGhi_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
+
+            String maVT = txtMa.Text;
             if (txtMa.Text.Trim() == "")
             {
                 MessageBox.Show("Mã vật tư không được thiếu!", "", MessageBoxButtons.OK);
@@ -114,6 +119,9 @@ namespace QLVT
                 bdsVT.ResetCurrentItem();
                 this.vattuTableAdapter.Connection.ConnectionString = Program.connstr;
                 this.vattuTableAdapter.Update(this.DS.Vattu);
+                undolist.Push(maVT);
+                undolist.Push("INSERT");
+                bdsVT.Position = vitri;
             }
             catch (Exception ex)
             {
@@ -122,8 +130,8 @@ namespace QLVT
             }
             gcVatTu.Enabled = true;
             btnThem.Enabled = btnSua.Enabled = btnXoa.Enabled = btnReload.Enabled
-                = btnThoat.Enabled = true;
-            btnGhi.Enabled = btnUnDo.Enabled = false;
+                = btnThoat.Enabled = btnUnDo.Enabled = true;
+            btnGhi.Enabled =  false;
 
             pnInput.Enabled = false;
         }
@@ -156,6 +164,7 @@ namespace QLVT
         }
         private void btnXoa_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
+            String VT_info = txtMa.Text.Trim() + "#" + txtTen.Text.Trim() + "#" + txtDVT.Text.Trim() + "#" + txtSLT.Text.Trim();
             String mavt = ((DataRowView)bdsVT[bdsVT.Position])["MAVT"].ToString();
             int result = checkTTMaVT(mavt);
             //if (result == -1)
@@ -175,6 +184,11 @@ namespace QLVT
                     //mavt = int.Parse(((DataRowView)bdsVT[bdsVT.Position])["MAVT"].ToString());
                     bdsVT.RemoveCurrent();
                     this.vattuTableAdapter.Connection.ConnectionString = Program.connstr;
+
+                    btnUnDo.Enabled = true;
+                    undolist.Push(VT_info);
+                    undolist.Push("DELETE");
+
                     this.vattuTableAdapter.Update(this.DS.Vattu);
                 }
                 catch (Exception ex)
@@ -190,7 +204,33 @@ namespace QLVT
 
         private void btnUnDo_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            // Chưa làm
+            if (undolist.Count > 0)
+            {
+                String statement = undolist.Pop().ToString();
+                if (statement.Equals("DELETE"))
+                {
+                    this.bdsVT.AddNew();
+                    String TT = undolist.Pop().ToString();
+                    Console.WriteLine(TT);
+                    String[] TT_VT = TT.Split('#');
+
+                    txtMa.Text = TT_VT[0];
+                    txtTen.Text = TT_VT[1];
+                    txtDVT.Text = TT_VT[2];
+                    txtSLT.Text = TT_VT[3];
+                    this.bdsVT.EndEdit();
+                    this.vattuTableAdapter.Update(this.DS.Vattu);
+                }
+                else if (statement.Equals("INSERT"))
+                {
+                    String maVT = undolist.Pop().ToString();
+                    int vitrixoa = bdsVT.Find("MAVT", maVT);
+                    bdsVT.Position = vitrixoa;
+                    bdsVT.RemoveCurrent();
+                    this.vattuTableAdapter.Update(this.DS.Vattu);
+                }
+            }
+            if (undolist.Count == 0) btnUnDo.Enabled = false;
         }
 
         private void btnPrint_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)

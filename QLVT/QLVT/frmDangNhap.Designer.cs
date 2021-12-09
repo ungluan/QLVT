@@ -41,18 +41,18 @@ namespace QLVT
             // 
             // txtPass
             // 
-            this.txtPass.Location = new System.Drawing.Point(452, 132);
+            this.txtPass.Location = new System.Drawing.Point(418, 132);
             this.txtPass.Name = "txtPass";
             this.txtPass.PasswordChar = '*';
-            this.txtPass.Size = new System.Drawing.Size(311, 33);
+            this.txtPass.Size = new System.Drawing.Size(345, 29);
             this.txtPass.TabIndex = 11;
             this.txtPass.UseSystemPasswordChar = true;
             // 
             // txtLogin
             // 
-            this.txtLogin.Location = new System.Drawing.Point(452, 67);
+            this.txtLogin.Location = new System.Drawing.Point(418, 67);
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(311, 33);
+            this.txtLogin.Size = new System.Drawing.Size(345, 29);
             this.txtLogin.TabIndex = 10;
             // 
             // label3
@@ -60,7 +60,7 @@ namespace QLVT
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(288, 139);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 26);
+            this.label3.Size = new System.Drawing.Size(79, 21);
             this.label3.TabIndex = 9;
             this.label3.Text = "Mật khẩu";
             // 
@@ -69,7 +69,7 @@ namespace QLVT
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(288, 77);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(106, 26);
+            this.label2.Size = new System.Drawing.Size(84, 21);
             this.label2.TabIndex = 8;
             this.label2.Text = "Tài khoản";
             // 
@@ -77,9 +77,9 @@ namespace QLVT
             // 
             this.cmbChiNhanh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChiNhanh.FormattingEnabled = true;
-            this.cmbChiNhanh.Location = new System.Drawing.Point(452, 12);
+            this.cmbChiNhanh.Location = new System.Drawing.Point(418, 12);
             this.cmbChiNhanh.Name = "cmbChiNhanh";
-            this.cmbChiNhanh.Size = new System.Drawing.Size(311, 34);
+            this.cmbChiNhanh.Size = new System.Drawing.Size(345, 29);
             this.cmbChiNhanh.TabIndex = 7;
             this.cmbChiNhanh.SelectedIndexChanged += new System.EventHandler(this.cmbChiNhanh_SelectedIndexChanged);
             // 
@@ -88,15 +88,15 @@ namespace QLVT
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(288, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 26);
+            this.label1.Size = new System.Drawing.Size(85, 21);
             this.label1.TabIndex = 6;
             this.label1.Text = "Chi nhánh";
             // 
             // btnDangNhap
             // 
-            this.btnDangNhap.Location = new System.Drawing.Point(293, 230);
+            this.btnDangNhap.Location = new System.Drawing.Point(359, 230);
             this.btnDangNhap.Name = "btnDangNhap";
-            this.btnDangNhap.Size = new System.Drawing.Size(213, 48);
+            this.btnDangNhap.Size = new System.Drawing.Size(191, 48);
             this.btnDangNhap.TabIndex = 12;
             this.btnDangNhap.Text = "Đăng nhập";
             this.btnDangNhap.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@ namespace QLVT
             // 
             // btnThoat
             // 
-            this.btnThoat.Location = new System.Drawing.Point(572, 230);
+            this.btnThoat.Location = new System.Drawing.Point(603, 230);
             this.btnThoat.Name = "btnThoat";
             this.btnThoat.Size = new System.Drawing.Size(191, 48);
             this.btnThoat.TabIndex = 13;
@@ -115,9 +115,9 @@ namespace QLVT
             // frmDangNhap
             // 
             this.Appearance.Options.UseFont = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1068, 436);
+            this.ClientSize = new System.Drawing.Size(1163, 436);
             this.Controls.Add(this.btnThoat);
             this.Controls.Add(this.btnDangNhap);
             this.Controls.Add(this.txtPass);

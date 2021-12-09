@@ -49,7 +49,8 @@ namespace QLVT
         private void frmDangNhap_Load(object sender, EventArgs e)
         {
             if (KetNoi_CSDLGOC() == 0) return;
-            LayDSPM("SELECT * FROM Get_Subscribes");
+            //LayDSPM("SELECT * FROM Get_Subscribes");
+            LayDSPM("SELECT * FROM V_DS_PHANMANH");
             cmbChiNhanh.SelectedIndex = 1;
             cmbChiNhanh.SelectedIndex = 0;
         }
@@ -87,7 +88,7 @@ namespace QLVT
                 Program.mGroup = Program.myReader.GetString(2);
                 
             }
-            catch(Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Login bạn nhập không có quyền truy cập dữ liệu.\nBạn xem lại username, password", "", MessageBoxButtons.OK);
                 return;

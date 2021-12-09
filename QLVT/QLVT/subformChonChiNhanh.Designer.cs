@@ -43,7 +43,7 @@ namespace QLVT
             this.lblTitle.Font = new System.Drawing.Font("Times New Roman", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.Location = new System.Drawing.Point(213, 42);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(342, 45);
+            this.lblTitle.Size = new System.Drawing.Size(300, 38);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "Chuyển Chi Nhánh";
             // 
@@ -53,7 +53,7 @@ namespace QLVT
             this.lblSubTitle.AutoSize = true;
             this.lblSubTitle.Location = new System.Drawing.Point(157, 98);
             this.lblSubTitle.Name = "lblSubTitle";
-            this.lblSubTitle.Size = new System.Drawing.Size(449, 25);
+            this.lblSubTitle.Size = new System.Drawing.Size(386, 21);
             this.lblSubTitle.TabIndex = 1;
             this.lblSubTitle.Text = "Vui lòng chọn chi nhánh mà bạn muốn chuyển đến";
             // 
@@ -61,9 +61,9 @@ namespace QLVT
             // 
             this.cmbChiNhanh.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cmbChiNhanh.FormattingEnabled = true;
-            this.cmbChiNhanh.Location = new System.Drawing.Point(278, 146);
+            this.cmbChiNhanh.Location = new System.Drawing.Point(274, 151);
             this.cmbChiNhanh.Name = "cmbChiNhanh";
-            this.cmbChiNhanh.Size = new System.Drawing.Size(334, 33);
+            this.cmbChiNhanh.Size = new System.Drawing.Size(334, 28);
             this.cmbChiNhanh.TabIndex = 2;
             this.cmbChiNhanh.SelectedIndexChanged += new System.EventHandler(this.cmbChiNhanh_SelectedIndexChanged);
             // 
@@ -84,13 +84,13 @@ namespace QLVT
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(157, 154);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 25);
+            this.label3.Size = new System.Drawing.Size(85, 21);
             this.label3.TabIndex = 4;
             this.label3.Text = "Chi nhánh";
             // 
             // subformChonChiNhanh
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 344);
             this.Controls.Add(this.label3);

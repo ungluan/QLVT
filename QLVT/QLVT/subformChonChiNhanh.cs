@@ -11,17 +11,26 @@ using System.Windows.Forms;
 
 namespace QLVT
 {
-    public partial class subformChonChiNhanh : Form
+    public partial class subformChonChiNhanh : DevExpress.XtraEditors.XtraForm
     {
         public int ReturnValue1 { get; set; }
         private String tenCN = "";
         private int maNV;
-        public subformChonChiNhanh(int maNV)
+
+        
+
+
+        public subformChonChiNhanh(object gETVALUE)
         {
             InitializeComponent();
-            this.maNV = maNV;
+            /*this.maNV = maNV;*/
         
         }
+
+        public subformChonChiNhanh(Action<string> gETVALUE)
+        {
+        }
+
         private void LayDSPM(String cmd)
         {
             SqlConnection conn_string = new SqlConnection(Program.connstr_publisher);
@@ -36,7 +45,8 @@ namespace QLVT
         }
         private void subformChonChiNhanh_Load(object sender, EventArgs e)
         {
-            LayDSPM("SELECT * FROM Get_Subscribes");
+            //LayDSPM("SELECT * FROM Get_Subscribes");
+            LayDSPM("SELECT * FROM V_DS_PHANMANH");
         }
 
         private void cmbChiNhanh_SelectedIndexChanged(object sender, EventArgs e)

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QLVT
@@ -15,6 +11,12 @@ namespace QLVT
     {
         String macn="";
         int vitri = 0;
+        public Stack<String> history_kho;
+        // Undo Type
+        String THEM_BTN = "_&them"; // Click btn thêm
+        String XOA_BTN = "_&xoa"; // Click btn xóa
+        String GHI_BTN = "_&ghi"; // Click btn ghi
+
         public frmKho()
         {
             InitializeComponent();
@@ -32,6 +34,7 @@ namespace QLVT
         {
 
             DS.EnforceConstraints = false;
+            history_kho = new Stack<string>();
 
             this.khoTableAdapter.Connection.ConnectionString = Program.connstr;
             this.khoTableAdapter.Fill(this.DS.Kho);
@@ -94,7 +97,35 @@ namespace QLVT
 
         private void btnUnDo_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            // Chưa
+            String undoHistory = "";
+            if (history_kho.Count > 0) undoHistory = history_kho.Pop();
+            if (history_kho.Count == 0) btnUnDo.Enabled = false;
+
+            if (undoHistory.Equals(""))
+            {
+                btnUnDo.Enabled = false;
+                return;
+            }
+
+            if (undoHistory.Equals(THEM_BTN))
+            {
+                unClickThem();
+                return;
+            }
+
+            if (undoHistory.Contains("_&ghi"))
+            {
+                int index = split_index_ghi(undoHistory);
+                unClickGhi(index);
+                return;
+            }
+
+            if (undoHistory.Contains(XOA_BTN))
+            {
+                string[] data_backup_split = split_data(undoHistory);
+                unClickXoa(data_backup_split);
+                return;
+            }
         }
 
         private void btnReload_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -155,18 +186,22 @@ namespace QLVT
             {
                 bdsKHO.EndEdit();
                 bdsKHO.ResetCurrentItem();
-                this.khoTableAdapter.Connection.ConnectionString = Program.connstr;
+                history_kho.Push(GHI_BTN + "#%" + txtMa.Text);
+                
                 this.khoTableAdapter.Update(this.DS.Kho);
+                bdsKHO.Position = vitri;
+                this.khoTableAdapter.Connection.ConnectionString = Program.connstr;
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi ghi nhân viên.\n" + ex.Message, "", MessageBoxButtons.OK);
-                return;
+                MessageBox.Show("Lỗi ghi kho.\n" + ex.Message, "", MessageBoxButtons.OK);
+                
             }
             gcKho.Enabled = true;
             btnThem.Enabled = btnSua.Enabled = btnXoa.Enabled = btnReload.Enabled
                 = btnThoat.Enabled = true;
-            btnGhi.Enabled = btnUnDo.Enabled = false;
+            btnGhi.Enabled = false;
 
             pnInput.Enabled = false;
         }
@@ -194,7 +229,10 @@ namespace QLVT
                 try
                 {
                     makho = ((DataRowView)bdsKHO[bdsKHO.Position])["MAKHO"].ToString();
+                    string tenKho = ((DataRowView)bdsKHO[bdsKHO.Position])["TENKHO"].ToString();
+                    string diaChi = ((DataRowView)bdsKHO[bdsKHO.Position])["DIACHI"].ToString();
                     bdsKHO.RemoveCurrent();
+                    history_kho.Push(XOA_BTN + "#%" + makho + "#%" + tenKho + "#%" + diaChi);
                     this.khoTableAdapter.Connection.ConnectionString = Program.connstr;
                     this.khoTableAdapter.Update(this.DS.Kho);
                 }
@@ -203,10 +241,84 @@ namespace QLVT
                     MessageBox.Show("Lỗi xóa kho, bạn hãy xóa lại\n" + ex.Message, "", MessageBoxButtons.OK);
                     this.khoTableAdapter.Fill(this.DS.Kho);
                     bdsKHO.Position = bdsKHO.Find("MAKHO", makho);
-                    return;
+                   
                 }
             }
             if (bdsKHO.Count == 0) btnXoa.Enabled = false;
         }
+
+
+        // ------ UNDO ------
+        private void unClickThem()
+        {
+            btnThem.Enabled = btnXoa.Enabled = gcKho.Enabled = btnReload.Enabled = pnInput.Enabled = true;
+            btnGhi.Enabled = txtMa.Enabled = false;
+            this.bdsKHO.CancelEdit();
+            bdsKHO.Position = vitri;
+        }
+
+        private void themFunc()
+        {
+            vitri = bdsKHO.Position;
+            txtMa.Enabled = true;
+            this.bdsKHO.AddNew();
+            txtMaCN.Text = macn;
+            btnThem.Enabled = btnXoa.Enabled = gcKho.Enabled = btnReload.Enabled = false;
+            btnUnDo.Enabled = pnInput.Enabled = btnGhi.Enabled = true;
+        }
+
+        private void unClickGhi(int index)
+        {
+            string maKho_backup = ((DataRowView)bdsKHO[index])[0].ToString().Trim();
+            DialogResult dr = MessageBox.Show("Phiếu '" + maKho_backup + "' đã được ghi vào database.\nBạn có chắc muốn Undo không??", "Xác nhận",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dr == DialogResult.Yes)
+            {
+                //int deletedPosition = current_bds.Find(type, maPhieu);
+
+                string tenKho_backup = ((DataRowView)bdsKHO[index])[1].ToString().Trim();
+                string diaChi_backup = ((DataRowView)bdsKHO[index])[2].ToString().Trim();
+                bdsKHO.RemoveAt(index);
+                themFunc();
+                this.khoTableAdapter.Update(this.DS.Kho);
+                txtMa.Text = maKho_backup;
+                txtTen.Text = tenKho_backup;
+                txtDiaChi.Text = maKho_backup;
+
+                return;
+            }
+
+            history_kho.Push(GHI_BTN + "#%" + maKho_backup);
+        }
+
+        private void unClickXoa(string[] data_backup)
+        {
+            bdsKHO.AddNew();
+            ((DataRowView)bdsKHO[bdsKHO.Position])[0] = data_backup[1];
+            // Khi tách dữ liệu ra thì ngày được tách thành: [2] - mm/dd/yyyy [3] - time [4] - AM/PM
+            ((DataRowView)bdsKHO[bdsKHO.Position])[1] = data_backup[2];
+            ((DataRowView)bdsKHO[bdsKHO.Position])[2] = data_backup[3];
+            ((DataRowView)bdsKHO[bdsKHO.Position])[3] = macn;
+            bdsKHO.EndEdit();
+            this.khoTableAdapter.Update(this.DS.Kho);
+        }
+
+        public int split_index_ghi(string GHIBTN)
+        {
+            char[] separators = new char[] { '#', '%' };
+            string[] temp = GHIBTN.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            string maPhieu = temp[1];
+            int indexDataRowUpdated = bdsKHO.Find("MAKHO", maPhieu);
+
+            return indexDataRowUpdated;
+        }
+
+        private string[] split_data(string XOABTN)
+        {
+            char[] separators = new char[] { '#', '%' };
+            string[] data = XOABTN.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            return data;
+        }
     }
+
 }

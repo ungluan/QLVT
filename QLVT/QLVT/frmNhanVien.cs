@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraReports.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,9 @@ namespace QLVT
        
         int vitri = 0;
         String macn = "";
+        Stack undolist = new Stack();
+
+
         public frmNhanVien()
         {
             InitializeComponent();
@@ -133,12 +137,93 @@ namespace QLVT
         private void btnPhucHoi_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             bdsNV.CancelEdit();
-            if (btnThem.Enabled == false) bdsNV.Position = vitri;
+            if (undolist.Count > 0)
+            {
+                String statement = undolist.Pop().ToString();
+                if (statement.Equals("DELETE"))
+                {
+                    //btnThem.Enabled = btnXoa.Enabled = nhanVienGridControl.Enabled = btnReload.Enabled = btnThoat.Enabled = false;
+                    //btnUndo.Enabled = gcInfoNhanVien.Enabled = btnGhi.Enabled = true;
+                    this.bdsNV.AddNew();
+                    String TT = undolist.Pop().ToString();
+                    String[] TT_NV = TT.Split('#');
+                    txtMaNV.Text = TT_NV[0];
+                    txtHo.Text = TT_NV[1];
+                    txtTen.Text = TT_NV[2];
+                    txtMaCN.Text = TT_NV[3];
+                    deNgaySinh.Text = TT_NV[4];
+                    txtDiaChi.Text = TT_NV[5];
+                    txtLuong.Text = TT_NV[6];
+                    trangThaiXoaCheckBox.Checked = false;
+                    this.bdsNV.EndEdit();
+                    this.nhanVienTableAdapter.Update(this.DS.NhanVien);
+                }
+                else if (statement.Equals("INSERT"))
+                {
+                    String maNV = undolist.Pop().ToString();
+                    int vitrixoa = bdsNV.Find("MANV", maNV);
+                    bdsNV.Position = vitrixoa;
+                    bdsNV.RemoveCurrent();
+                }
+                else if (statement.Equals("CHUYENCN"))
+                {
+                    String info = undolist.Pop().ToString();
+                    String[] info_CN = info.Split('#');
+                    Console.WriteLine(info_CN[0] + " " + info_CN[1]);
+                    String servername_temp = Program.servername;
+
+                    Program.servername = info_CN[1].ToString();
+
+                    Program.mlogin = Program.remotelogin;
+                    Program.password = Program.remotepassword;
+
+
+                    if (Program.KetNoi() == 0)
+                        MessageBox.Show("Lỗi kết nối về chi nhánh mới", "", MessageBoxButtons.OK);
+                    String maNV = info_CN[0].ToString();
+                    String maCN = "";
+                    if (info_CN[1].ToString().Contains("2")) maCN = "CN1";
+                    else if (info_CN[1].ToString().Contains("1")) maCN = "CN2";
+                    Program.conn = new SqlConnection(Program.connstr);
+                    Program.conn.Open();
+                    SqlCommand cmd = new SqlCommand("SP_CHUYENCHINHANH_NV", Program.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@MANV", maNV));
+                    cmd.Parameters.Add(new SqlParameter("@MACN", maCN));
+                    SqlDataReader myReader = null;
+                    try
+                    {
+                        myReader = cmd.ExecuteReader();
+                        MessageBox.Show("Chuyển nhân viên trở về thành công", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        this.nhanVienTableAdapter.Fill(this.DS.NhanVien);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    finally
+                    {
+                        if (Program.servername != servername_temp)
+                        {
+                            Program.servername = servername_temp;
+                            Program.mlogin = Program.mloginDN;
+                            Program.password = Program.passwordDN;
+                            if (Program.KetNoi() == 0)
+                                MessageBox.Show("Lỗi kết nối về chi nhánh mới", "", MessageBoxButtons.OK);
+                        }
+
+                    }
+
+                }
+                this.nhanVienTableAdapter.Update(this.DS.NhanVien);
+            }
+            if (undolist.Count == 0) btnUnDo.Enabled = false;
+            /*if (btnThem.Enabled == false) bdsNV.Position = vitri;
             gcNhanVien.Enabled = true;
             pnInput.Enabled = false;
             btnThem.Enabled = btnSua.Enabled = btnXoa.Enabled = btnUnDo.Enabled
                 = btnThoat.Enabled = true;
-            btnGhi.Enabled = false;
+            btnGhi.Enabled = false;*/
         }
 
         private void btnSua_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -192,10 +277,16 @@ namespace QLVT
             {
                 try
                 {
+                    String NV_info = txtMaNV.Text.Trim() + "#" + txtHo.Text.Trim() + "#" + txtTen.Text.Trim() + "#" + txtMaCN.Text.Trim() + "#" +
+                            deNgaySinh.Text + "#" + txtDiaChi.Text.Trim() + "#" + txtLuong.Text.Trim();
+                    Console.WriteLine(NV_info);
                     manv = int.Parse(((DataRowView)bdsNV[bdsNV.Position])["MANV"].ToString());
                     bdsNV.RemoveCurrent();
                     String query = "EXEC [dbo].[SP_Xoa_Tai_Khoan] @MANV = N'" + manv+"'";
                     Program.ExecSqlNonQuery(query);
+                    btnUnDo.Enabled = true;
+                    undolist.Push(NV_info);
+                    undolist.Push("DELETE");
                     this.nhanVienTableAdapter.Connection.ConnectionString = Program.connstr;
                     this.nhanVienTableAdapter.Update(this.DS.NhanVien);
                 }catch(Exception ex)
@@ -211,6 +302,7 @@ namespace QLVT
 
         private void btnGhi_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
+            String maNV = txtMaNV.Text;
             if (txtMaNV.Text.Trim() == "")
             {
                 MessageBox.Show("Mã nhân viên không được thiếu!", "", MessageBoxButtons.OK);
@@ -272,6 +364,8 @@ namespace QLVT
                 // kết nối tới
                 bdsNV.EndEdit();
                 bdsNV.ResetCurrentItem();
+                undolist.Push(maNV);
+                undolist.Push("INSERT");
                 this.nhanVienTableAdapter.Connection.ConnectionString = Program.connstr;
                 this.nhanVienTableAdapter.Update(this.DS.NhanVien);
             }catch(Exception ex)
@@ -281,8 +375,8 @@ namespace QLVT
             }
             gcNhanVien.Enabled = true;
             btnThem.Enabled = btnSua.Enabled = btnXoa.Enabled = btnReload.Enabled
-                = btnThoat.Enabled = true;
-            btnGhi.Enabled = btnUnDo.Enabled = false;
+                = btnThoat.Enabled = btnUnDo.Enabled = true;
+            btnGhi.Enabled  = false;
 
             pnInput.Enabled = false;
         }
@@ -354,7 +448,6 @@ namespace QLVT
 
         private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-  
             int maNV = int.Parse(((DataRowView)bdsNV[bdsNV.Position])["MANV"].ToString());
             subformChonChiNhanh form = new subformChonChiNhanh(maNV);
             form.ShowDialog();
